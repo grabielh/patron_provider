@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:patron_provider/BigData/eventos.dart';
 import 'package:patron_provider/BigData/userdata.dart';
 import 'package:provider/provider.dart';
 
@@ -13,19 +16,40 @@ class _QuestionTareaState extends State<QuestionTarea> {
   late List<bool> nocheckbo;
   double progressValue = 0.0;
 
+  SharedPreferencesManager sharedPreferencesManager =
+      SharedPreferencesManager();
+
   @override
   void initState() {
     super.initState();
     final dateUser = Provider.of<TareasProvider>(context, listen: false);
     nocheckbo = List.generate(dateUser.tareas.length, (index) => false);
+
+    sharedPreferencesManager
+        .loadCheckboxState(dateUser.tareas.length)
+        .then((states) {
+      setState(() {
+        nocheckbo = states;
+        progressValue = getProgressValue();
+      });
+    });
+  }
+
+  void saveChanges() {
+    sharedPreferencesManager.saveChanges(nocheckbo);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Cambios guardados correctamente.'),
+      ),
+    );
   }
 
   double getProgressValue() {
-    int selectedConunt = nocheckbo.where((element) => element).length;
-    if (selectedConunt == 0) {
+    int selectedCount = nocheckbo.where((element) => element).length;
+    if (selectedCount == 0) {
       return 0.0;
     } else {
-      return progressValue = selectedConunt / nocheckbo.length.toDouble();
+      return selectedCount / nocheckbo.length.toDouble();
     }
   }
 
@@ -89,7 +113,10 @@ class _QuestionTareaState extends State<QuestionTarea> {
           Padding(
             padding: const EdgeInsets.only(bottom: 40.0),
             child: ElevatedButton(
-                onPressed: () {}, child: const Text('Guardar cambios')),
+                onPressed: () {
+                  saveChanges();
+                },
+                child: const Text('Guardar cambios')),
           ),
         ],
       ),
