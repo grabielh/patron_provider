@@ -22,7 +22,9 @@ class _QuestionTareaState extends State<QuestionTarea> {
   @override
   void initState() {
     super.initState();
+    // Obtener la instancia de TareasProvider para acceder a las tareas.
     final dateUser = Provider.of<TareasProvider>(context, listen: false);
+    // Inicializar la lista de checkboxes con el mismo número de elementos que las tareas.
     nocheckbo = List.generate(dateUser.tareas.length, (index) => false);
 
     sharedPreferencesManager
@@ -35,8 +37,10 @@ class _QuestionTareaState extends State<QuestionTarea> {
     });
   }
 
+  // Guardar los cambios realizados en los checkboxes en SharedPreferences.
   void saveChanges() {
     sharedPreferencesManager.saveChanges(nocheckbo);
+    // Mostrar un mensaje de confirmación al usuario.
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Cambios guardados correctamente.'),
@@ -44,6 +48,7 @@ class _QuestionTareaState extends State<QuestionTarea> {
     );
   }
 
+  // Calcular y obtener el valor de progreso actual.
   double getProgressValue() {
     int selectedCount = nocheckbo.where((element) => element).length;
     if (selectedCount == 0) {

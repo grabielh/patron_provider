@@ -10,6 +10,7 @@ class HistoryTarea extends StatefulWidget {
 }
 
 class _HistoryTareaState extends State<HistoryTarea> {
+  // Elimina una tarea de la lista según su índice.
   void reducir(int index) {
     final dateUser = Provider.of<TareasProvider>(context, listen: false);
     if (index >= 0 && index < dateUser.tareas.length) {
